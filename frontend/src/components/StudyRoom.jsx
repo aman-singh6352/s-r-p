@@ -7,13 +7,14 @@ export default function StudyRoom({ roomId, user, leaveRoom }) {
   const [inputMsg, setInputMsg] = useState('');
   const [timeRemaining, setTimeRemaining] = useState(1500); // 25 mins
   const [isRunning, setIsRunning] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   
   const socketRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = io('https://study-room-backend-c3t1.onrender.com');
+    socketRef.current = io('${API_URL}');
 
-    fetch(`https://study-room-backend-c3t1.onrender.com/api/rooms/${roomId}`, {
+    fetch(`${API_URL}/api/rooms/${roomId}`, {
       headers: { Authorization: `Bearer ${user.token}` },
     })
       .then(res => res.json())
@@ -45,7 +46,7 @@ export default function StudyRoom({ roomId, user, leaveRoom }) {
       }, 1000);
     } else if (timeRemaining === 0 && isRunning) {
       setIsRunning(false);
-      fetch(`https://study-room-backend-c3t1.onrender.com/api/rooms/${roomId}/session`, {
+      fetch(`${API_URL}/api/rooms/${roomId}/session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

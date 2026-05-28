@@ -4,10 +4,11 @@ export default function Dashboard({ user, selectRoom, logout }) {
   const [rooms, setRooms] = useState([]);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
   const fetchRooms = async () => {
     try {
-      const res = await fetch('https://study-room-backend-c3t1.onrender.com/api/rooms', {
+      const res = await fetch('${API_URL}/api/rooms', {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       const data = await res.json();
@@ -24,7 +25,7 @@ export default function Dashboard({ user, selectRoom, logout }) {
   const handleCreateRoom = async (e) => {
     e.preventDefault();
     try {
-      await fetch('https://study-room-backend-c3t1.onrender.com/api/rooms', {
+      await fetch('${API_URL}/api/rooms', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

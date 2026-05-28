@@ -11,8 +11,9 @@ function App() {
   const handleAuth = async (e) => {
     e.preventDefault();
     const endpoint = isRegister ? 'register' : 'login';
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
     try {
-      const res = await fetch(`https://study-room-backend-c3t1.onrender.com/api/auth/${endpoint}`, {
+      const res = await fetch(`${API_URL}/api/auth/${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(authForm),
