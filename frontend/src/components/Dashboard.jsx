@@ -7,7 +7,7 @@ export default function Dashboard({ user, selectRoom, logout }) {
 
   const fetchRooms = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/rooms', {
+      const res = await fetch('https://study-room-backend-c3t1.onrender.com/api/rooms', {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       const data = await res.json();
@@ -24,7 +24,7 @@ export default function Dashboard({ user, selectRoom, logout }) {
   const handleCreateRoom = async (e) => {
     e.preventDefault();
     try {
-      await fetch('http://localhost:5000/api/rooms', {
+      await fetch('https://study-room-backend-c3t1.onrender.com/api/rooms', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

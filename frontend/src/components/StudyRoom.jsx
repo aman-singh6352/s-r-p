@@ -11,9 +11,9 @@ export default function StudyRoom({ roomId, user, leaveRoom }) {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = io('http://localhost:5000');
+    socketRef.current = io('https://study-room-backend-c3t1.onrender.com');
 
-    fetch(`http://localhost:5000/api/rooms/${roomId}`, {
+    fetch(`https://study-room-backend-c3t1.onrender.com/api/rooms/${roomId}`, {
       headers: { Authorization: `Bearer ${user.token}` },
     })
       .then(res => res.json())
@@ -45,7 +45,7 @@ export default function StudyRoom({ roomId, user, leaveRoom }) {
       }, 1000);
     } else if (timeRemaining === 0 && isRunning) {
       setIsRunning(false);
-      fetch(`http://localhost:5000/api/rooms/${roomId}/session`, {
+      fetch(`https://study-room-backend-c3t1.onrender.com/api/rooms/${roomId}/session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

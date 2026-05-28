@@ -12,7 +12,7 @@ function App() {
     e.preventDefault();
     const endpoint = isRegister ? 'register' : 'login';
     try {
-      const res = await fetch(`http://localhost:5000/api/auth/${endpoint}`, {
+      const res = await fetch(`https://study-room-backend-c3t1.onrender.com/api/auth/${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(authForm),
@@ -30,7 +30,7 @@ function App() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-brand-dark px-4">
         <form onSubmit={handleAuth} className="w-full max-w-md space-y-4 rounded-2xl bg-brand-panel p-8 shadow-xl border border-slate-700/50">
-          <h2 className="text-3xl font-extrabold text-center tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-extrabold text-center tracking-tight bg-linear-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
             {isRegister ? 'Create Account' : 'Welcome Back'}
           </h2>
           {isRegister && (
