@@ -5,7 +5,7 @@ export default function StudyRoom({ roomId, user, leaveRoom }) {
   const [room, setRoom] = useState(null);
   const [messages, setMessages] = useState([]);
   const [inputMsg, setInputMsg] = useState('');
-  const [timeRemaining, setTimeRemaining] = useState(1500); // 25 mins
+  const [timeRemaining, setTimeRemaining] = useState(1500);
   const [isRunning, setIsRunning] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   
