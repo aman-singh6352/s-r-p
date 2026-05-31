@@ -8,7 +8,7 @@ export default function Dashboard({ user, selectRoom, logout }) {
 
   const fetchRooms = async () => {
     try {
-      const res = await fetch("${API_URL}/api/rooms", {
+      const res = await fetch(`${API_URL}/api/rooms`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       const data = await res.json();
@@ -25,7 +25,7 @@ export default function Dashboard({ user, selectRoom, logout }) {
   const handleCreateRoom = async (e) => {
     e.preventDefault();
     try {
-      await fetch("${API_URL}/api/rooms", {
+      await fetch(`${API_URL}/api/rooms`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

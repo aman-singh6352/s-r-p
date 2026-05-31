@@ -12,7 +12,7 @@ export default function StudyRoom({ roomId, user, leaveRoom }) {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = io("${API_URL}");
+    socketRef.current = io(`${API_URL}`);
 
     fetch(`${API_URL}/api/rooms/${roomId}`, {
       headers: { Authorization: `Bearer ${user.token}` },
