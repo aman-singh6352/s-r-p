@@ -5,6 +5,8 @@ export default function StudyRoom({ roomId, user, leaveRoom }) {
   const [room, setRoom] = useState(null);
   const [messages, setMessages] = useState([]);
   const [inputMsg, setInputMsg] = useState("");
+  const [participantName, setParticipantName] = useState("");
+  const [participantError, setParticipantError] = useState("");
   const [timeRemaining, setTimeRemaining] = useState(1500);
   const [isRunning, setIsRunning] = useState(false);
   const API_URL = "https://study-room-backend-c3t1.onrender.com";
@@ -26,6 +28,17 @@ export default function StudyRoom({ roomId, user, leaveRoom }) {
 
     socketRef.current.on("messageRecieved", (msg) => {
       setMessages((prev) => [...prev, msg]);
+    });
+
+    socketRef.current.on("userJoined", ({ username }) => {
+      setRoom((prevRoom) => {
+        if (!prevRoom) return prevRoom;
+        if (prevRoom.participants?.includes(username)) return prevRoom;
+        return {
+          ...prevRoom,
+          participants: [...(prevRoom.participants || []), username]
+        };
+      });
     });
 
     socketRef.current.on("timerSynced", ({ timeRemaining, isRunning }) => {
@@ -68,6 +81,38 @@ export default function StudyRoom({ roomId, user, leaveRoom }) {
     });
   };
 
+  const addParticipant = async (e) => {
+    e.preventDefault();
+    const username = participantName.trim();
+    if (!username) {
+      setParticipantError("Enter a username to invite");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/api/rooms/${roomId}/join`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({ username }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Unable to add member");
+      }
+
+      const updatedRoom = await res.json();
+      setRoom(updatedRoom);
+      setParticipantName("");
+      setParticipantError("");
+    } catch (error) {
+      setParticipantError(error.message || "Could not add member");
+    }
+  };
+
   const sendMessage = (e) => {
     e.preventDefault();
     if (!inputMsg.trim()) return;
@@ -97,14 +142,17 @@ export default function StudyRoom({ roomId, user, leaveRoom }) {
   return (
     <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-2rem)]">
       <div className="lg:col-span-2 flex flex-col justify-between space-y-6">
-        <div className="bg-brand-panel p-6 rounded-xl border border-slate-800 flex justify-between items-center">
-          <div>
+        <div className="bg-brand-panel p-6 rounded-xl border border-slate-800 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
             <h2 className="text-2xl font-bold text-white">{room.name}</h2>
             <p className="text-xs text-indigo-400 mt-1">
               Invite Token ID:{" "}
               <span className="text-slate-300 font-mono bg-slate-900 px-2 py-0.5 rounded">
                 {room._id}
               </span>
+            </p>
+            <p className="text-xs text-slate-500 mt-3">
+              Invite teammates by username and bring them into this room.
             </p>
           </div>
           <button
@@ -113,6 +161,48 @@ export default function StudyRoom({ roomId, user, leaveRoom }) {
           >
             Exit Workspace
           </button>
+        </div>
+
+        <div className="bg-brand-panel p-5 rounded-xl border border-slate-800 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-sm text-white">Room Members</h3>
+            <span className="text-xs text-slate-500">{room.participants?.length || 0} joined</span>
+          </div>
+          <div className="grid gap-2 max-h-40 overflow-y-auto pb-1">
+            {room.participants?.length ? (
+              room.participants.map((member) => (
+                <div
+                  key={member}
+                  className="text-sm text-slate-200 px-3 py-2 bg-slate-900 rounded-lg border border-slate-800"
+                >
+                  {member}
+                </div>
+              ))
+            ) : (
+              <div className="text-sm text-slate-500">No members yet.</div>
+            )}
+          </div>
+          <form onSubmit={addParticipant} className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Invite member username"
+              className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+              value={participantName}
+              onChange={(e) => {
+                setParticipantName(e.target.value);
+                setParticipantError("");
+              }}
+            />
+            <button
+              type="submit"
+              className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-500"
+            >
+              Add
+            </button>
+          </form>
+          {participantError && (
+            <p className="text-xs text-rose-400">{participantError}</p>
+          )}
         </div>
 
         <div className="bg-brand-panel p-8 rounded-xl border border-slate-800 flex flex-col items-center justify-center flex-1 space-y-6">

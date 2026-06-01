@@ -34,6 +34,25 @@ export const getRoomById = async (req, res) => {
   }
 };
 
+export const joinRoom = async (req, res) => {
+  const username = req.body.username?.trim() || req.user.username;
+  if (!username) return res.status(400).json({ message: 'Username is required' });
+
+  try {
+    const room = await Room.findById(req.params.id);
+    if (!room) return res.status(404).json({ message: 'Room not found' });
+
+    if (!room.participants.includes(username)) {
+      room.participants.push(username);
+      await room.save();
+    }
+
+    res.json(room);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const saveSessionHistory = async (req, res) => {
   const { duration } = req.body;
   try {
